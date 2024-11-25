@@ -7,7 +7,7 @@ import {
 	sendResetSuccessEmail,
 	sendVerificationEmail,
 	sendWelcomeEmail,
-} from "../mailtrap/emails.js";
+} from "../nodemailer/emails.js";
 import { User } from "../models/user.model.js";
 
 export const signup = async (req, res) => {
@@ -19,7 +19,6 @@ export const signup = async (req, res) => {
 		}
 
 		const userAlreadyExists = await User.findOne({ email });
-		console.log("userAlreadyExists", userAlreadyExists);
 
 		if (userAlreadyExists) {
 			return res.status(400).json({ success: false, message: "User already exists" });
@@ -37,9 +36,10 @@ export const signup = async (req, res) => {
 		});
 
 		await user.save();
-
+		const savedUser = await User.findOne({ email });
+		const role = savedUser.role;
 		// jwt
-		generateTokenAndSetCookie(res, user._id);
+		generateTokenAndSetCookie(res, user._id,role);
 
 		await sendVerificationEmail(user.email, verificationToken);
 
@@ -101,7 +101,7 @@ export const login = async (req, res) => {
 			return res.status(400).json({ success: false, message: "Invalid credentials" });
 		}
 
-		generateTokenAndSetCookie(res, user._id);
+		generateTokenAndSetCookie(res, user._id,user.role);
 
 		user.lastLogin = new Date();
 		await user.save();
