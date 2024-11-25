@@ -3,7 +3,7 @@ import { User } from "../models/user.model.js";
 export const getAllUsers = async (req, res) => {
     try {
       // Fetch all users' name and email
-      const users = await User.find({}, "name email"); // Only name and email
+      const users = await User.find({}, "name email role"); // Only name and email
   
       return res.status(200).json({
         success: true,

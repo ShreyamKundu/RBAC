@@ -5,7 +5,7 @@ import { getAllUsers } from '../controllers/admin.controller.js';
 
 const router = express.Router();
 
-router.get("/admin-dashboard", verifyToken, authorizeRole("admin"), getAllUsers);
+router.get("/users", verifyToken, authorizeRole("Admin"), getAllUsers);
 
 
 

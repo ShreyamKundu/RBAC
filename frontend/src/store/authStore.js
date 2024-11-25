@@ -95,4 +95,20 @@ export const useAuthStore = create((set) => ({
 			throw error;
 		}
 	},
+	getAllUsers: async () => {
+	set({ isLoading: true, error: null });
+	try {
+		const response = await axios.get('http://localhost:5000/api/admin/users'); // Assuming the route is `/users`
+		return response.data.users; 
+	} catch (error) {
+		set({
+			error: error.response?.data?.message || "Error fetching users",
+			isLoading: false,
+		});
+		throw error;
+	} finally {
+		set({ isLoading: false });
+	}
+},
+
 }));
