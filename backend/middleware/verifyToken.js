@@ -30,10 +30,8 @@ export const verifyToken = async (req, res, next) => {
           message: "Unauthenticated - invalid or missing token or userId",
         });
       }
-
       // Find user by userId with a valid googleId
-      user = await User.findOne({ _id: userId, googleId: { $exists: true } });
-
+      user = await User.findOne({ _id: userId });
       if (!user) {
         return res.status(401).json({
           success: false,

@@ -159,7 +159,7 @@ const AdminDashboardPage = () => {
   const handleSaveRole = async () => {
     try {
       setLoading(true);
-      const updatedUser = await updateUserRole(editingUser._id, selectedRole);
+      const updatedUser = await updateUserRole(editingUser._id, user?._id, selectedRole);
       setUsers((prev) => prev.map((u) => (u._id === updatedUser._id ? updatedUser : u)));
       alert("User role updated successfully");
       setEditingUser(null);

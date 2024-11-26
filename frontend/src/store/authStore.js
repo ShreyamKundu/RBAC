@@ -197,11 +197,11 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  updateUserRole: async (userId, role) => {
+  updateUserRole: async (userId, adminId, role) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.patch(`http://localhost:5000/api/admin/update/user/${userId}`, { role, userId }); 
-      set({ message: "User role updated successfully", isLoading: false });
+      const response = await axios.patch(`http://localhost:5000/api/admin/update/user/${userId}`, { role, userId:adminId }); 
+      set({user: response.data.user, message: "User role updated successfully", isLoading: false });
       return response.data.user;
     } catch (error) {
       set({
