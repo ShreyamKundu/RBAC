@@ -93,18 +93,50 @@ export const useAuthStore = create((set) => ({
     }
   },
   checkAuth: async () => {
-    set({ isCheckingAuth: true, error: null });
-    try {
-      const response = await axios.get(`${API_URL}/check-auth`);
+  set({ isCheckingAuth: true, error: null });
+  
+  try {
+    // First, check Google OAuth authentication using /login/success route
+    const googleAuthResponse = await axios.get("http://localhost:5000/auth/login/success");  // Replace with your correct OAuth check route
+    
+    if (googleAuthResponse.data.success && googleAuthResponse.data.user) {
+      // If Google OAuth authentication is successful, update state
       set({
-        user: response.data.user,
+        user: googleAuthResponse.data.user,
         isAuthenticated: true,
         isCheckingAuth: false,
       });
-    } catch (error) {
-      set({ error: null, isCheckingAuth: false, isAuthenticated: false });
+      return;  // If Google OAuth is successful, no need to check JWT
     }
-  },
+    
+    // If Google OAuth fails, check JWT authentication using /check-auth route
+    const jwtResponse = await axios.get(`${API_URL}/check-auth`);
+    
+    if (jwtResponse.data.success && jwtResponse.data.user) {
+      // If JWT authentication is successful, update state
+      set({
+        user: jwtResponse.data.user,
+        isAuthenticated: true,
+        isCheckingAuth: false,
+      });
+    } else {
+      // If both Google OAuth and JWT authentication fail, mark user as not authenticated
+      set({
+        isAuthenticated: false,
+        user: null,
+        isCheckingAuth: false,
+      });
+    }
+  } catch (error) {
+    // Handle errors for both Google OAuth and JWT checks
+    set({
+      error: error.response?.data?.message || "Error checking authentication",
+      isCheckingAuth: false,
+      isAuthenticated: false,
+    });
+  }
+},
+
   forgotPassword: async (email) => {
     set({ isLoading: true, error: null });
     try {

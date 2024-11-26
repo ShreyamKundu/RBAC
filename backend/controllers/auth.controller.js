@@ -121,8 +121,17 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	res.clearCookie("token");
-	res.status(200).json({ success: true, message: "Logged out successfully" });
+	req.logout((err) => {
+		if (err) {
+		  return res.status(500).json({ success: false, message: "Error logging out from Google" });
+		}
+		
+		// Clear JWT token from the cookies
+		res.clearCookie("token");
+
+		// Send success response
+		res.status(200).json({ success: true, message: "Logged out successfully" });
+	  });
 };
 
 export const forgotPassword = async (req, res) => {
