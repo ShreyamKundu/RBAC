@@ -92,7 +92,7 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  checkAuth: async () => {
+  checkAuth: async (userId) => {
     set({ isCheckingAuth: true, error: null });
   
     try {
@@ -108,7 +108,7 @@ export const useAuthStore = create((set) => ({
         });
       } else {
         // If Google OAuth fails, proceed to check JWT authentication
-        const jwtResponse = await axios.get(`${API_URL}/check-auth`);
+        const jwtResponse = await axios.get(`${API_URL}/check-auth/${userId}`);
   
         if (jwtResponse.data.success && jwtResponse.data.user) {
           // If JWT authentication is successful, update state
@@ -167,10 +167,10 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
-  getAllUsers: async () => {
+  getAllUsers: async (userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get("http://localhost:5000/api/admin/users"); // Assuming the route is `/users`
+      const response = await axios.get(`http://localhost:5000/api/admin/users/${userId}`);
       return response.data.users;
     } catch (error) {
       set({
@@ -182,10 +182,10 @@ export const useAuthStore = create((set) => ({
       set({ isLoading: false });
     }
   },
-  deleteUser: async (userId) => {
+  deleteUser: async (userId,adminId) => {
     set({ isLoading: true, error: null });
     try {
-      await axios.delete(`http://localhost:5000/api/admin/delete/user/${userId}`); // Assuming the route is `/delete/user/:userId`
+      await axios.delete(`http://localhost:5000/api/admin/delete/user/${userId}`,{userId:adminId}); // Assuming the route is `/delete/user/:userId`
       set({ message: "User deleted successfully", isLoading: false });
       return true; 
     } catch (error) {
@@ -196,4 +196,19 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
+
+  updateUserRole: async (userId, role) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/admin/update/user/${userId}`, { role, userId }); 
+      set({ message: "User role updated successfully", isLoading: false });
+      return response.data.user;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Error updating user role",
+        isLoading: false,
+      });
+      throw error;
+    }
+  }
 }));
