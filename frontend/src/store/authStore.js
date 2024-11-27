@@ -210,5 +210,39 @@ export const useAuthStore = create((set) => ({
       });
       throw error;
     }
+  },
+
+  assignTask: async (userId,adminId, task) => {
+    set({ isLoading: true, error: null });
+    try {
+      console.log("task", task);  
+      console.log("userId", userId);
+      console.log("adminId", adminId);
+      const response = await axios.post(`http://localhost:5000/api/admin/assign/task/${adminId}`, {title:task.title, description: task.description, assignedTo: userId});
+      set({ message: "Task assigned successfully", isLoading: false });
+      return response.data.task;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Error assigning task",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  getUserTasks: async (userId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.get(`http://localhost:5000/api/admin/tasks/${userId}`);
+      return response.data.tasks;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Error fetching tasks",
+        isLoading: false,
+      });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
   }
 }));

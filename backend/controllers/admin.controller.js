@@ -1,4 +1,5 @@
 import { User } from "../models/user.model.js";
+import { Task } from "../models/task.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 export const getAllUsers = async (req, res) => {
@@ -88,6 +89,62 @@ export const updateUserRole = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+
+
+export const assignTask = async (req, res) => {
+  try {
+    const { title, description, assignedTo } = req.body;
+
+
+    // Validate if the assigned user exists
+    const user = await User.findById(assignedTo);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Assigned user not found.",
+      });
+    }
+
+    // Create the task
+    const task = await Task.create({
+      title,
+      description,
+      assignedTo,
+      createdBy: req.userId,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Task assigned successfully.",
+      task,
+    });
+  } catch (error) {
+    console.error("Error assigning task: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error.",
+    });
+  }
+};
+
+
+export const getUserTasks = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const tasks = await Task.find({ assignedTo: req.userId });
+
+    return res.status(200).json({
+      success: true,
+      tasks,
+    });
+  } catch (error) {
+    console.error("Error fetching tasks: ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error.",
     });
   }
 };
