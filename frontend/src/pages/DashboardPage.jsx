@@ -2,10 +2,13 @@ import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 import { formatDate } from "../utils/date";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const DashboardPage = () => {
-	const { user, logout } = useAuthStore();
+	const { user, logout, getUserTasks, updateTaskStatus } = useAuthStore();
 	const navigate = useNavigate();
+	const [tasks, setTasks] = useState([]);
 
 	const handleLogout = () => {
 		logout();
@@ -14,6 +17,35 @@ const DashboardPage = () => {
 	const handleAdminDashboard = () => {
 		navigate("/admin-dashboard");
 	};
+
+	// Fetch tasks for the logged-in user
+	useEffect(() => {
+		const fetchTasks = async () => {
+			try {
+				const response = await getUserTasks(user._id);
+				setTasks(response);
+			} catch (error) {
+				console.error("Failed to fetch tasks:", error);
+			}
+		};
+
+		fetchTasks();
+	}, []);
+
+	const handleUpdateTaskStatus = async (taskId, newStatus) => {
+		try {
+		  const updatedTask = await updateTaskStatus(taskId, newStatus, user._id);
+		  setTasks((prevTasks) =>
+			prevTasks.map((task) =>
+			  task._id === updatedTask?._id ? updatedTask : task
+			)
+		  );
+		} catch (error) {
+		  console.error("Failed to update task status:", error.message);
+		}
+	  };
+	
+	 
 
 	return (
 		<motion.div
@@ -60,6 +92,51 @@ const DashboardPage = () => {
 					</p>
 				</motion.div>
 			</div>
+
+			{/* Tasks Section */}
+			<motion.div
+				className='p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700 mt-6'
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.6 }}
+			>
+				<h3 className='text-xl font-semibold text-green-400 mb-3'>Your Tasks</h3>
+				{Array.isArray(tasks) && tasks.length > 0 ? (
+					<div className='space-y-4'>
+						{tasks.map((task) => (
+							<motion.div
+								key={task._id}
+								className='p-4 bg-gray-700 rounded-lg shadow-md'
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+							>
+								<h4 className='text-lg font-bold text-green-300'>{task.title}</h4>
+								<p className='text-gray-300 mb-2'>{task.description}</p>
+								<p className='text-gray-400 text-sm'>
+									Created by: {task.createdBy?.name || "Unknown"}
+								</p>
+								<div className='mt-3'>
+									<label htmlFor={`status-${task._id}`} className='text-gray-300 mr-2'>
+										Status:
+									</label>
+									<select
+										id={`status-${task?._id}`}
+										value={task.status}
+										onChange={(e) => handleUpdateTaskStatus(task._id, e.target.value)}
+										className='p-2 rounded bg-gray-600 text-gray-300'
+									>
+										<option value='Pending'>Pending</option>
+										<option value='In Progress'>In Progress</option>
+										<option value='Completed'>Completed</option>
+									</select>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				) : (
+					<p className='text-gray-400'>No tasks assigned to you.</p>
+				)}
+			</motion.div>
 
 			{/* Admin Dashboard Button */}
 			{user?.role === "Admin" && (

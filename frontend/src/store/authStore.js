@@ -244,5 +244,20 @@ export const useAuthStore = create((set) => ({
     } finally {
       set({ isLoading: false });
     }
-  }
+  },
+
+  updateTaskStatus: async (taskId, newStatus, userId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axios.patch(`http://localhost:5000/api/user/update-task/${taskId}`, { status: newStatus,userId });
+      set({ message: "Task status updated successfully", isLoading: false });
+      return response.data.task;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || "Error updating task status",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
 }));
