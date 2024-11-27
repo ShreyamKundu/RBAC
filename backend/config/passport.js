@@ -26,7 +26,8 @@ passport.use(
             isVerified: true, // Emails verified by Google
           });
         }
-
+        user.lastLogin = new Date();
+        await user.save();
         return done(null, user);
       } catch (err) {
         return done(err, null);
