@@ -38,6 +38,7 @@ passport.use(
 
 // Serialize user to store in session
 passport.serializeUser((user, done) => {
+  console.log("Serializing user:", user);
   done(null, user._id);
 });
 
@@ -45,6 +46,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
+    console.log("Deserialized user:", user);
     done(null, user);
   } catch (err) {
     done(err, null);

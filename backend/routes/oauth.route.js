@@ -15,7 +15,10 @@ router.get(
   passport.authenticate("google", {
     successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
     failureRedirect: "/auth/login/failed", // Failure redirect
-  })
+  }), (req, res) => {
+    console.log("Authenticated user:", req.user);
+    // The user object should be available here
+  }
 );
 
 // Route to handle login success
