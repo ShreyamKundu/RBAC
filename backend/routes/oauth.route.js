@@ -9,29 +9,29 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// // Handles the Google OAuth callback
-// router.get(
-//   "/google/callback",
-//   passport.authenticate("google", {
-//     successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
-//     failureRedirect: "/auth/login/failed", // Failure redirect
-//   }), (req, res) => {
-//     console.log("Authenticated user:", req.user);
-//     // The user object should be available here
-//   }
-// );
-
-
+// Handles the Google OAuth callback
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/auth/login/failed",
-  }),
-  (req, res) => {
-    console.log("Authenticated user:", req.user); // Check if req.user is populated
-    res.redirect("https://rbac-system-tau.vercel.app"); // Redirect to client
+    successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
+    failureRedirect: "/auth/login/failed", // Failure redirect
+  }), (req, res) => {
+    console.log("Authenticated user:", req.user);
+    // The user object should be available here
   }
 );
+
+
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", {
+//     failureRedirect: "/auth/login/failed",
+//   }),
+//   (req, res) => {
+//     console.log("Authenticated user:", req.user); // Check if req.user is populated
+//     res.redirect("https://rbac-system-tau.vercel.app"); // Redirect to client
+//   }
+// );
 
 // Route to handle login success
 router.get("/login/success", async (req, res) => {
@@ -46,7 +46,7 @@ router.get("/login/success", async (req, res) => {
       corrId: req.headers["x-correlation-id"], // Example of additional headers
     });
   }
-  return res.json({ success: false, message: "Not authenticated" });
+  return res.json({ success: true, message: "Not authenticated" });
 });
 
 // Route to handle login failure
