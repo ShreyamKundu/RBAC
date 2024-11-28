@@ -125,16 +125,16 @@ export const logout = async (req, res) => {
 	res.clearCookie("token", { path: '/' }); // Ensure path is correct
   
 	
-	req.logout((err) => {
-	  if (err) {
-		return res.status(500).json({ success: false, message: "Error logging out from Google" });
-	  }
+	// req.logout((err) => {
+	//   if (err) {
+	// 	return res.status(500).json({ success: false, message: "Error logging out from Google" });
+	//   }
   
-	  // Destroy session
-	  req.session.destroy((sessionErr) => {
-		if (sessionErr) {
-		  return res.status(500).json({ success: false, message: "Error destroying session" });
-		}
+	//   // Destroy session
+	//   req.session.destroy((sessionErr) => {
+	// 	if (sessionErr) {
+	// 	  return res.status(500).json({ success: false, message: "Error destroying session" });
+	// 	}
   
 		// // Clear JWT token cookie
 		// res.clearCookie("token", { path: '/' }); // Ensure path is correct
@@ -143,8 +143,8 @@ export const logout = async (req, res) => {
 		// res.cookie("token", "", { expires: new Date(0), path: '/' });
   
 		return res.status(200).json({ success: true, message: "Logged out successfully" });
-	  });
-	});
+	//   });
+	// });
   };
   
 
