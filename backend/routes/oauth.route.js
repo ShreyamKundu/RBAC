@@ -13,7 +13,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "http://localhost:5173", // Client redirect
+    successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
     failureRedirect: "/auth/login/failed", // Failure redirect
   })
 );
