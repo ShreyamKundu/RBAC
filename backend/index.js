@@ -34,6 +34,12 @@ app.use(
     secret: process.env.SESSION_SECRET || "defaultSecret",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true, // Can't be accessed by JavaScript
+      secure: true, // Set to true if using HTTPS
+      sameSite: "None", // Required for cross-origin requests
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
   })
 );
 
