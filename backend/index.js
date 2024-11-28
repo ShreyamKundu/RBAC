@@ -22,7 +22,7 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(cors({
   origin: process.env.CLIENT_URL,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
 
