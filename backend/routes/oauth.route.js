@@ -9,15 +9,27 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// Handles the Google OAuth callback
+// // Handles the Google OAuth callback
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", {
+//     successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
+//     failureRedirect: "/auth/login/failed", // Failure redirect
+//   }), (req, res) => {
+//     console.log("Authenticated user:", req.user);
+//     // The user object should be available here
+//   }
+// );
+
+
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "https://rbac-system-tau.vercel.app", // Client redirect
-    failureRedirect: "/auth/login/failed", // Failure redirect
-  }), (req, res) => {
-    console.log("Authenticated user:", req.user);
-    // The user object should be available here
+    failureRedirect: "/auth/login/failed",
+  }),
+  (req, res) => {
+    console.log("Authenticated user:", req.user); // Check if req.user is populated
+    res.redirect("https://rbac-system-tau.vercel.app"); // Redirect to client
   }
 );
 
