@@ -34,15 +34,6 @@ app.use(
     secret: process.env.SESSION_SECRET || "defaultSecret",
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI, // MongoDB URI
-      ttl: 14 * 24 * 60 * 60, // Session lifetime (14 days)
-    }),
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // For production
-      sameSite: "none", // Ensure cookies work with cross-origin requests
-    },
   })
 );
 
