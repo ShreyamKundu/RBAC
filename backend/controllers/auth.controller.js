@@ -122,15 +122,27 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
 	req.logout((err) => {
-		if (err) {
-		  return res.status(500).json({ success: false, message: "Error logging out from Google" });
+	  if (err) {
+		return res.status(500).json({ success: false, message: "Error logging out from Google" });
+	  }
+  
+	  // Destroy session
+	  req.session.destroy((sessionErr) => {
+		if (sessionErr) {
+		  return res.status(500).json({ success: false, message: "Error destroying session" });
 		}
-		
-		// Clear JWT token from the cookies
-		res.clearCookie("token", { path: '/' });		// Send success response
-		res.status(200).json({ success: true, message: "Logged out successfully" });
+  
+		// Clear JWT token cookie
+		res.clearCookie("token", { path: '/' }); // Ensure path is correct
+  
+		// Optionally expire cookie
+		res.cookie("token", "", { expires: new Date(0), path: '/' });
+  
+		return res.status(200).json({ success: true, message: "Logged out successfully" });
 	  });
-};
+	});
+  };
+  
 
 export const forgotPassword = async (req, res) => {
 	const { email } = req.body;
