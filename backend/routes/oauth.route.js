@@ -21,6 +21,7 @@ router.get(
 // Route to handle login success
 router.get("/login/success", async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
+  console.log("req.user", req.user);
   if (req.user) {
     return res.status(200).json({
       success: true,
