@@ -56,6 +56,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
+    console.log("Deserializing fn");
     const user = await User.findById(id);
     if (!user) {
       return done(null, false); // No user found
