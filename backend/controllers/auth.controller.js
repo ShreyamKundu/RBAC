@@ -122,33 +122,22 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
 	
-	res.clearCookie("token", {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "none",
-		maxAge: 0, // Immediately expire the cookie
+	req.logout((err) => {
+	  if (err) {
+		return res.status(500).json({ success: false, message: "Error logging out from Google" });
+	  }
+  
+		// // Clear JWT token cookie
+		res.clearCookie("token", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "none",
+			maxAge: 0, // Immediately expire the cookie
+		  });  
+		
+		return res.status(200).json({ success: true, message: "Logged out successfully" });
 	  });
-	
-	return res.status(200).json({ success: true, message: "Logged out successfully" });
 
-	// // Clear JWT token cookie
-	// res.clearCookie("token"); // Ensure path is correct
-  
-	
-	// // req.logout((err) => {
-	// //   if (err) {
-	// // 	return res.status(500).json({ success: false, message: "Error logging out from Google" });
-	// //   }
-  
-	// 	// // Clear JWT token cookie
-	// 	// res.clearCookie("token", { path: '/' }); // Ensure path is correct
-  
-	// 	// // Optionally expire cookie
-	// 	// res.cookie("token", "", { expires: new Date(0), path: '/' });
-  
-	// 	return res.status(200).json({ success: true, message: "Logged out successfully" });
-	// //   });
-	// // });
   };
   
 
