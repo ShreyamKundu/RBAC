@@ -2,11 +2,18 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import { Edit, Trash, Clipboard, Eye } from "lucide-react"; 
-
+import { Edit, Trash, Clipboard, Eye } from "lucide-react";
+import { Tooltip } from "react-tooltip";
 
 const AdminDashboardPage = () => {
-  const { getAllUsers, deleteUser, updateUserRole, user, assignTask, getUserTasks } = useAuthStore();
+  const {
+    getAllUsers,
+    deleteUser,
+    updateUserRole,
+    user,
+    assignTask,
+    getUserTasks,
+  } = useAuthStore();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +46,9 @@ const AdminDashboardPage = () => {
   }, []);
 
   const handleDeleteUser = async (userId) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this user?"
+    );
     if (!confirmDelete) return;
 
     try {
@@ -64,8 +73,14 @@ const AdminDashboardPage = () => {
   const handleSaveRole = async () => {
     try {
       setLoading(true);
-      const updatedUser = await updateUserRole(editingUser._id, user?._id, selectedRole);
-      setUsers((prev) => prev.map((u) => (u._id === updatedUser._id ? updatedUser : u)));
+      const updatedUser = await updateUserRole(
+        editingUser._id,
+        user?._id,
+        selectedRole
+      );
+      setUsers((prev) =>
+        prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
+      );
       alert("User role updated successfully");
       setEditingUser(null);
     } catch (error) {
@@ -75,7 +90,7 @@ const AdminDashboardPage = () => {
     }
   };
 
-  const handleOpenTaskModal =  (user) => {
+  const handleOpenTaskModal = (user) => {
     setAssigningTask(user);
   };
 
@@ -84,7 +99,7 @@ const AdminDashboardPage = () => {
       alert("Task details cannot be empty");
       return;
     }
-    const task = await assignTask(userId,user._id, taskDetails);
+    const task = await assignTask(userId, user._id, taskDetails);
     setTaskDetails("");
     setAssigningTask(null);
   };
@@ -102,10 +117,17 @@ const AdminDashboardPage = () => {
       transition={{ duration: 0.5 }}
       className="max-w-2xl w-full mx-auto mt-10 p-8 bg-gray-900 bg-opacity-80 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl border border-gray-800"
     >
-      <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-600 text-transparent bg-clip-text">
-        Admin Dashboard
-      </h2>
-
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-600 text-transparent bg-clip-text">
+          Admin Dashboard
+        </h2>
+        <button
+          onClick={() => navigate("/")}
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-600 transition"
+        >
+          Back to Home
+        </button>
+      </div>
       <div className="space-y-6">
         <h3 className="text-xl font-semibold text-green-400 mb-3">User List</h3>
         {loading ? (
@@ -125,31 +147,38 @@ const AdminDashboardPage = () => {
                   <p className="text-gray-300">Role: {user.role}</p>
                 </div>
                 <div className="flex space-x-2">
-                <button
+                  <button
                     onClick={() => handleOpenTaskModal(user)}
                     className="text-yellow-500 px-2 rounded hover:text-yellow-600 transition"
+                    data-tooltip-id="assign-tooltip"
+                    data-tooltip-content="Assign Task"
                   >
                     <Clipboard className="inline-block" />
-                    </button>
+                  </button>
                   <button
                     onClick={() => handleViewTasks(user._id)}
                     className="text-green-500 px-2 rounded hover:text-green-600 transition"
+                    data-tooltip-id="view-tooltip"
+                    data-tooltip-content="View Tasks"
                   >
                     <Eye className="inline-block" />
                   </button>
                   <button
                     onClick={() => handleEditUser(user)}
                     className="text-blue-500 px-2 rounded hover:text-blue-600 transition"
+                    data-tooltip-id="edit-tooltip"
+                    data-tooltip-content="Edit User"
                   >
                     <Edit className="inline-block" />
                   </button>
                   <button
                     onClick={() => handleDeleteUser(user._id)}
                     className="text-red-500 px-2 rounded hover:text-red-600 transition"
+                    data-tooltip-id="delete-tooltip"
+                    data-tooltip-content="Delete User"
                   >
                     <Trash className="inline-block" />
                   </button>
-                  
                 </div>
               </div>
             ))}
@@ -161,7 +190,9 @@ const AdminDashboardPage = () => {
       {editingUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-lg mb-4 text-white">Edit Role for {editingUser.name}</h3>
+            <h3 className="text-lg mb-4 text-white">
+              Edit Role for {editingUser.name}
+            </h3>
             <div className="mb-4">
               <label className="block text-gray-400 mb-2">Select Role</label>
               <select
@@ -191,24 +222,35 @@ const AdminDashboardPage = () => {
         </div>
       )}
 
-{assigningTask && (
+      {assigningTask && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-lg mb-4 text-white">Assign Task to {assigningTask.name}</h3>
+            <h3 className="text-lg mb-4 text-white">
+              Assign Task to {assigningTask.name}
+            </h3>
             <div className="mb-4">
               <label className="block text-gray-400 mb-2">Task Title</label>
               <input
                 type="text"
                 value={taskDetails.title}
-                onChange={(e) => setTaskDetails({ ...taskDetails, title: e.target.value })}
+                onChange={(e) =>
+                  setTaskDetails({ ...taskDetails, title: e.target.value })
+                }
                 className="w-full p-2 text-black"
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-400 mb-2">Task Description</label>
+              <label className="block text-gray-400 mb-2">
+                Task Description
+              </label>
               <textarea
                 value={taskDetails.description}
-                onChange={(e) => setTaskDetails({ ...taskDetails, description: e.target.value })}
+                onChange={(e) =>
+                  setTaskDetails({
+                    ...taskDetails,
+                    description: e.target.value,
+                  })
+                }
                 className="w-full p-2 text-black"
               ></textarea>
             </div>
@@ -233,15 +275,15 @@ const AdminDashboardPage = () => {
       {viewingTasks && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl w-96">
-            <h3 className="text-lg mb-4 text-white">
-              Tasks 
-            </h3>
+            <h3 className="text-lg mb-4 text-white">Tasks</h3>
             {viewingTasks.length > 0 ? (
               <ul className="space-y-2">
                 {viewingTasks.map((task, index) => (
                   <li key={index} className="p-3 bg-gray-700 rounded">
                     <p className="text-gray-300">Title: {task.title}</p>
-                    <p className="text-gray-300">Description: {task.description}</p>
+                    <p className="text-gray-300">
+                      Description: {task.description}
+                    </p>
                   </li>
                 ))}
               </ul>
@@ -259,10 +301,12 @@ const AdminDashboardPage = () => {
           </div>
         </div>
       )}
+      <Tooltip id="assign-tooltip" />
+      <Tooltip id="view-tooltip" />
+      <Tooltip id="edit-tooltip" />
+      <Tooltip id="delete-tooltip" />
     </motion.div>
   );
 };
 
 export default AdminDashboardPage;
-
-
