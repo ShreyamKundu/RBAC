@@ -122,19 +122,13 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
 	// Clear JWT token cookie
-	res.clearCookie("token", { path: '/' }); // Ensure path is correct
+	res.clearCookie("token"); // Ensure path is correct
   
 	
 	// req.logout((err) => {
 	//   if (err) {
 	// 	return res.status(500).json({ success: false, message: "Error logging out from Google" });
 	//   }
-  
-	//   // Destroy session
-	//   req.session.destroy((sessionErr) => {
-	// 	if (sessionErr) {
-	// 	  return res.status(500).json({ success: false, message: "Error destroying session" });
-	// 	}
   
 		// // Clear JWT token cookie
 		// res.clearCookie("token", { path: '/' }); // Ensure path is correct
