@@ -284,6 +284,9 @@ const AdminDashboardPage = () => {
                     <p className="text-gray-300">
                       Description: {task.description}
                     </p>
+                    <p className="text-gray-300">
+                      Description: {task.status}
+                    </p>
                   </li>
                 ))}
               </ul>
