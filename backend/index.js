@@ -33,8 +33,14 @@ app.use(
     secret: process.env.SESSION_SECRET || "defaultSecret",
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Ensure this is true in production
+      sameSite: "none", // Ensure cookies are sent for cross-origin requests
+    },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
