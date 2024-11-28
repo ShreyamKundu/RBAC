@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth"
+const API_URL = "https://rbac-jzpg.onrender.com/api/auth"
     
 
 axios.defaults.withCredentials = true;
@@ -95,7 +95,7 @@ export const useAuthStore = create((set) => ({
   
     try {
       // First, check Google OAuth authentication using /login/success route
-      const googleAuthResponse = await axios.get("http://localhost:5000/auth/login/success");  // Replace with your correct OAuth check route
+      const googleAuthResponse = await axios.get("https://rbac-jzpg.onrender.com/auth/login/success");  // Replace with your correct OAuth check route
       
       // If Google OAuth authentication is successful, update state
       if (googleAuthResponse.data.success && googleAuthResponse.data.user) {
@@ -168,7 +168,7 @@ export const useAuthStore = create((set) => ({
   getAllUsers: async (userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:5000/api/admin/users/${userId}`);
+      const response = await axios.get(`https://rbac-jzpg.onrender.com/api/admin/users/${userId}`);
       return response.data.users;
     } catch (error) {
       set({
@@ -183,7 +183,7 @@ export const useAuthStore = create((set) => ({
   deleteUser: async (userId,adminId) => {
     set({ isLoading: true, error: null });
     try {
-      await axios.delete(`http://localhost:5000/api/admin/delete/user/${userId}`,{userId:adminId}); // Assuming the route is `/delete/user/:userId`
+      await axios.delete(`https://rbac-jzpg.onrender.com/api/admin/delete/user/${userId}`,{userId:adminId}); // Assuming the route is `/delete/user/:userId`
       set({ message: "User deleted successfully", isLoading: false });
       return true; 
     } catch (error) {
@@ -198,7 +198,7 @@ export const useAuthStore = create((set) => ({
   updateUserRole: async (userId, adminId, role) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.patch(`http://localhost:5000/api/admin/update/user/${userId}`, { role, userId:adminId }); 
+      const response = await axios.patch(`https://rbac-jzpg.onrender.com/api/admin/update/user/${userId}`, { role, userId:adminId }); 
       set({user: response.data.user, message: "User role updated successfully", isLoading: false });
       return response.data.user;
     } catch (error) {
@@ -216,7 +216,7 @@ export const useAuthStore = create((set) => ({
       console.log("task", task);  
       console.log("userId", userId);
       console.log("adminId", adminId);
-      const response = await axios.post(`http://localhost:5000/api/admin/assign/task/${adminId}`, {title:task.title, description: task.description, assignedTo: userId});
+      const response = await axios.post(`https://rbac-jzpg.onrender.com/api/admin/assign/task/${adminId}`, {title:task.title, description: task.description, assignedTo: userId});
       set({ message: "Task assigned successfully", isLoading: false });
       return response.data.task;
     } catch (error) {
@@ -231,7 +231,7 @@ export const useAuthStore = create((set) => ({
   getUserTasks: async (userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.get(`http://localhost:5000/api/admin/tasks/${userId}`);
+      const response = await axios.get(`https://rbac-jzpg.onrender.com/api/admin/tasks/${userId}`);
       return response.data.tasks;
     } catch (error) {
       set({
@@ -247,7 +247,7 @@ export const useAuthStore = create((set) => ({
   updateTaskStatus: async (taskId, newStatus, userId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.patch(`http://localhost:5000/api/user/update-task/${taskId}`, { status: newStatus,userId });
+      const response = await axios.patch(`https://rbac-jzpg.onrender.com/api/user/update-task/${taskId}`, { status: newStatus,userId });
       set({ message: "Task status updated successfully", isLoading: false });
       return response.data.task;
     } catch (error) {
