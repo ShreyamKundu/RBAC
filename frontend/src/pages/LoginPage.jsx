@@ -94,7 +94,7 @@ const LoginPage = () => {
 	// Function to handle Google login
 	const handleGoogleLogin = async () => {
 		// Redirect to the backend /auth/google route to initiate Google OAuth
-		window.location.href = "http://localhost:5000/auth/google";
+		window.location.href = "https://rbac-jzpg.onrender.com/auth/google";
 	};
 
 	// Function to handle the standard email/password login
