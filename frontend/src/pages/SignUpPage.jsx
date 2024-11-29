@@ -15,8 +15,9 @@ const SignUpPage = () => {
   const { signup, error, isLoading } = useAuthStore();
   // Function to handle Google signup
   const handleGoogleSignup = async () => {
+    alert("Google login is not functional in production mode. Please use the email/password login.");
     // Redirect to the backend /auth/google route to initiate Google OAuth
-    window.location.href = "http://localhost:5000/auth/google";
+    // window.location.href = "http://localhost:5000/auth/google";
   };
 
   const handleSignUp = async (e) => {
